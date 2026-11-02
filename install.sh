@@ -56,6 +56,11 @@ install_systemd_unit() {
 }
 
 enable_widget() {
+  if omarchy plugin list --json 2>/dev/null | \
+     jq -e --arg id "$PLUGIN_NAME" '.[] | select(.id == $id) | .enabled' >/dev/null; then
+    log "widget already enabled (skip)"
+    return
+  fi
   omarchy plugin enable "$PLUGIN_NAME" right 2>&1 | sed 's/^/[x-notifications] /'
 }
 

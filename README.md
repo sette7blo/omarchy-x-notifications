@@ -15,17 +15,24 @@ title with `(N) ` so the shell can read it out of `hyprctl clients`.
 ## Install
 
 ```sh
+omarchy plugin add https://github.com/sette7blo/omarchy-x-notifications --enable
 ~/.config/omarchy/plugins/x-notifications/install.sh
 ```
 
-The installer is idempotent and:
+The first command is the standard Omarchy flow: clone into
+`~/.config/omarchy/plugins/x-notifications` and register the bar widget.
+The second command does the extras `omarchy plugin add` doesn't handle.
+Both commands are idempotent, so re-running them is safe.
+
+`install.sh`:
 
 1. Verifies a Chromium-based default browser.
 2. Appends `require()` lines for `hypr.lua` and `autostart.lua` to
    `~/.config/hypr/hyprland.lua`, guarded by sentinel comments.
 3. Installs and enables the user systemd service that hides the popover
    when focus leaves it.
-4. Runs `omarchy plugin enable x-notifications right` to add the bar widget.
+4. Enables the bar widget via `omarchy plugin enable` (skipped if you
+   already passed `--enable` above).
 5. Launches the hidden X webapp so you don't have to log out.
 
 ## Uninstall

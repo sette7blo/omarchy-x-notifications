@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "x-notifications",
+  "name": "X notifications",
+  "version": "0.1.0",
+  "author": "jonai",
+  "description": "Shows the unread X.com notification count in the bar and toggles a popover X web app on click. Works with any Chromium-based default browser.",
+  "homepage": "https://github.com/sette7blo/omarchy-x-notifications",
+  "kinds": ["bar-widget"],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "X notifications",
+    "description": "Unread X.com count in the bar, toggles a popover on click",
+    "category": "Status",
+    "allowMultiple": false,
+    "defaultSection": "right"
+  }
+}

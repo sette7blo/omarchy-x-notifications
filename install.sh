@@ -74,7 +74,7 @@ launch_webapp_now() {
   disown
 }
 
-for dep in jq socat hyprctl; do
+for dep in jq socat hyprctl omarchy-launch-webapp omarchy-cmd-default-browser; do
   command -v "$dep" >/dev/null || { log "ERROR: missing dependency: $dep"; exit 1; }
 done
 

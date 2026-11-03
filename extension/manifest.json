@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "X title badge",
-  "version": "1.0",
+  "version": "0.1.2",
   "description": "Prefix the x.com window title with the unread notification count so Hyprland can read it.",
   "content_scripts": [
     {

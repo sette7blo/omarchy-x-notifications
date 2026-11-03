@@ -1,18 +1,30 @@
 (function () {
   "use strict";
 
-  function readCount() {
-    const link = document.querySelector('a[href="/notifications"]');
-    if (!link) return 0;
-    const digits = link.textContent.match(/\d+/);
-    return digits ? parseInt(digits[0], 10) : 0;
+  // Try several selectors so we survive sidebar collapses and minor DOM
+  // reshuffles. Return the raw digit string (possibly with a trailing "+").
+  const SELECTORS = [
+    'a[href="/notifications"]',
+    'a[href$="/notifications"]',
+    '[aria-label*="unread notification" i]',
+  ];
+
+  function readRaw() {
+    for (const sel of SELECTORS) {
+      const el = document.querySelector(sel);
+      if (!el) continue;
+      const haystack =
+        (el.getAttribute("aria-label") || "") + " " + (el.textContent || "");
+      const m = haystack.match(/(\d+\+?)/);
+      return m ? m[1] : "";
+    }
+    return "";
   }
 
   function tick() {
-    if (location.pathname === "/notifications") return;
-    const count = readCount();
-    const stripped = document.title.replace(/^\(\d+\)\s+/, "");
-    const desired = count > 0 ? `(${count}) ${stripped}` : stripped;
+    const stripped = document.title.replace(/^\(\d+\+?\)\s+/, "");
+    const raw = location.pathname === "/notifications" ? "" : readRaw();
+    const desired = raw ? `(${raw}) ${stripped}` : stripped;
     if (document.title !== desired) document.title = desired;
   }
 

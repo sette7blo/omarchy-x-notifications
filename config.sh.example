@@ -1,0 +1,14 @@
+# x-notifications config. Copied to config.sh on first install.
+# Edit values and re-run install.sh to apply hypr-side changes.
+
+# URL the hidden webapp loads. Must be an x.com (or twitter.com) page for
+# the bundled extension to attach and prefix the window title.
+URL="https://x.com/home"
+
+# Hyprland special workspace name. Change if "xnotif" collides.
+WORKSPACE="xnotif"
+
+# Popover size in pixels. The window pins to the top-right; the x-offset
+# install.sh writes is WIDTH + 12 to leave a 12 px gap from the screen edge.
+WIDTH=440
+HEIGHT=680

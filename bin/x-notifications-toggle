@@ -10,7 +10,7 @@ running() {
 }
 
 if ! running; then
-  omarchy-launch-webapp https://x.com/home \
+  omarchy-launch-webapp "$URL" \
     --disable-background-timer-throttling \
     --disable-renderer-backgrounding \
     --disable-backgrounding-occluded-windows \

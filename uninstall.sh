@@ -11,6 +11,9 @@ SYSTEMD_UNIT="x-notifications-watcher.service"
 BEGIN="-- BEGIN $PLUGIN_NAME plugin (managed by install.sh)"
 END="-- END $PLUGIN_NAME plugin"
 
+# shellcheck source=bin/_common.sh
+source "$PLUGIN_DIR/bin/_common.sh"
+
 log() { printf '[x-notifications] %s\n' "$*"; }
 
 remove_hyprland_requires() {
@@ -40,7 +43,7 @@ disable_widget() {
 kill_webapp() {
   local addr
   addr=$(hyprctl clients -j 2>/dev/null | \
-    jq -r 'first(.[] | select(.class | test("-x\\.com__home-Default$")) | .address) // empty')
+    jq -r --arg re "$CLASS_RE" 'first(.[] | select(.class | test($re)) | .address) // empty')
   [[ -n $addr ]] || return 0
   hyprctl dispatch "hl.dsp.window.close({window=\"address:$addr\"})" >/dev/null || true
   log "closed running X webapp window"

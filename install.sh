@@ -13,6 +13,35 @@ END="-- END $PLUGIN_NAME plugin"
 
 log() { printf '[x-notifications] %s\n' "$*"; }
 
+seed_config() {
+  if [[ ! -f $PLUGIN_DIR/config.sh ]]; then
+    cp "$PLUGIN_DIR/config.sh.example" "$PLUGIN_DIR/config.sh"
+    log "seeded config.sh from config.sh.example"
+  fi
+  # shellcheck source=/dev/null
+  source "$PLUGIN_DIR/config.sh"
+  : "${URL:?URL must be set in config.sh}"
+  : "${WORKSPACE:?WORKSPACE must be set in config.sh}"
+  : "${WIDTH:?WIDTH must be set in config.sh}"
+  : "${HEIGHT:?HEIGHT must be set in config.sh}"
+}
+
+generate_lua() {
+  local x_offset=$((WIDTH + 12))
+  local tmpl out
+  for name in hypr autostart; do
+    tmpl="$PLUGIN_DIR/$name.lua.tmpl"
+    out="$PLUGIN_DIR/$name.lua"
+    sed -e "s|\${WIDTH}|$WIDTH|g" \
+        -e "s|\${HEIGHT}|$HEIGHT|g" \
+        -e "s|\${WORKSPACE}|$WORKSPACE|g" \
+        -e "s|\${URL}|$URL|g" \
+        -e "s|\${X_OFFSET}|$x_offset|g" \
+        "$tmpl" > "$out"
+    log "generated $(basename "$out") from $(basename "$tmpl")"
+  done
+}
+
 check_browser() {
   local b
   b=$(omarchy-cmd-default-browser 2>/dev/null || true)
@@ -66,7 +95,7 @@ enable_widget() {
 
 launch_webapp_now() {
   if hyprctl clients -j 2>/dev/null | \
-     jq -e '.[] | select(.class | test("-x\\.com__home-Default$"))' >/dev/null; then
+     jq -e '.[] | select(.class | test("-x\\.com__.*-Default$"))' >/dev/null; then
     return
   fi
   log "launching X webapp now so you don't need to log out"
@@ -74,11 +103,13 @@ launch_webapp_now() {
   disown
 }
 
-for dep in jq socat hyprctl omarchy-launch-webapp omarchy-cmd-default-browser; do
+for dep in jq socat hyprctl sed omarchy-launch-webapp omarchy-cmd-default-browser; do
   command -v "$dep" >/dev/null || { log "ERROR: missing dependency: $dep"; exit 1; }
 done
 
 log "plugin dir: $PLUGIN_DIR"
+seed_config
+generate_lua
 check_browser
 install_hyprland_requires
 install_systemd_unit
